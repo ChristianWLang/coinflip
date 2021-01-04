@@ -20,15 +20,15 @@ def register_client():
 
     @client.event
     async def on_message(message):
+        print(f'New message from {message.author}:\n{message.content}')
         if message.author == client.user:
             return
 
-        if not '@coinflip' in message.content.lower():
+        if not client.user.mentioned_in(message):
             return
 
         if '!github' in message.content.lower():
-            await message.channel.send(response)
-
+            await message.channel.send('https://github.com/ChristianWLang/coinflip')
 
     return client
 
