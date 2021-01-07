@@ -1,38 +1,40 @@
 import os
 
 import discord
+from discord.ext import commands
 
 
 AUTH_TOKEN = os.environ.get('DISCORD_TOKEN')
 GUILD_NAME = 'Indecisive'
 
 
+def when_mentioned_exclamation(bot, message):
+    prefixes = commands.when_mentioned(bot, message)
+    return [p + '!' for p in prefixes]
+
+
 def register_client():
     intents = discord.Intents.all()
-    client = discord.Client(intents=intents)
+    bot = commands.Bot(command_prefix=when_mentioned_exclamation, intents=intents)
 
-    @client.event
+    @bot.command(name='github')
+    async def _github(ctx):
+        print(ctx.bot)
+        if not bot.user.mentioned_in(ctx.message):
+            return
+
+        await ctx.send('https://github.com/ChristianWLang/coinflip')
+
+    @bot.event
     async def on_ready():
-        guild = discord.utils.get(client.guilds, name=GUILD_NAME)
+        guild = discord.utils.get(bot.guilds, name=GUILD_NAME)
 
-        print(f'{client.user} has connected to: {guild.name} {guild.id}')
+        print(f'{bot.user} has connected to: {guild.name} {guild.id}')
         print(guild.members)
 
-    @client.event
-    async def on_message(message):
-        print(f'New message from {message.author}:\n{message.content}')
-        if message.author == client.user:
-            return
-
-        if not client.user.mentioned_in(message):
-            return
-
-        if '!github' in message.content.lower():
-            await message.channel.send('https://github.com/ChristianWLang/coinflip')
-
-    return client
+    return bot
 
 
 if __name__ == '__main__':
-    client = register_client()
-    client.run(AUTH_TOKEN)
+    bot = register_client()
+    bot.run(AUTH_TOKEN)
