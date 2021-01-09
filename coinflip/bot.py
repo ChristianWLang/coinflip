@@ -1,4 +1,5 @@
 import os
+import random
 
 import discord
 from discord.ext import commands
@@ -17,13 +18,17 @@ def register_client():
     intents = discord.Intents.all()
     bot = commands.Bot(command_prefix=when_mentioned_exclamation, intents=intents)
 
-    @bot.command(name='github')
+    @bot.command(name='github', help='This bot\'s github, where you can contribute')
     async def _github(ctx):
-        print(ctx.bot)
-        if not bot.user.mentioned_in(ctx.message):
-            return
-
         await ctx.send('https://github.com/ChristianWLang/coinflip')
+
+    @bot.command(name='flip', help='Flip a coin')
+    async def _github(ctx):
+        await ctx.send(random.choice(['Heads!', 'Tails!']))
+
+    @bot.command(name='randint', help='Random integer between two numbers, inclusive')
+    async def _github(ctx, lower: int, upper: int):
+        await ctx.send(f'{random.randint(lower, upper)}')
 
     @bot.event
     async def on_ready():
